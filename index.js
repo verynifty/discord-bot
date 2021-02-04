@@ -138,5 +138,6 @@ client.on("ready", () => {
 // mayb start bot here
 const contracts = require("./contracts");
 const PairABI = require("./abis/Pair.sjon");
+const FactoryABI = require("./abis/Factory.sjon");
 
 client.login(process.env.DISCORD);

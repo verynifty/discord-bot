@@ -5,6 +5,7 @@ The VeryNifty Discord bot
 nft20 events for deposit or retrieval from a pool is:
 pairtoken -> transfer to 0x00 or from 0x00 (mining or burning)
 
+You'll need to divide the amount by 100 as 100 tokens are transfereed at those events
 
 example:
 
@@ -21,3 +22,4 @@ example:
         ```
         
         
+

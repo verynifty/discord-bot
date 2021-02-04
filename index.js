@@ -135,10 +135,8 @@ client.on("ready", () => {
   });
 });
 
-// client.on("message", (msg) => {
-//   if (msg.content === "ping") {
-//     msg.reply("Pong!");
-//   }
-// });
+// mayb start bot here
+const contracts = require("./contracts");
+const PairABI = require("./abis/Pair.sjon");
 
 client.login(process.env.DISCORD);

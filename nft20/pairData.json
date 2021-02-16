@@ -1,0 +1,84 @@
+{
+  "CREATION_BLOCK": 11023280,
+  "pairs": [
+    {
+      "_address": "0x22C4AD011Cce6a398B15503e0aB64286568933Ed",
+      "_name": "dokidoki20",
+      "_symbol": "doki20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0x303Af77Cf2774AABff12462C110A0CCf971D7DbE",
+      "_name": "NodeRunners",
+      "_symbol": "NDR20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0xaDBEBbd65a041E3AEb474FE9fe6939577eB2544F",
+      "_name": "CHONKER20",
+      "_symbol": "CHONK20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0x6B90f8632480F1d4f4D27A7B52de27B6DB2BDd9A",
+      "_name": "Meme Factory",
+      "_symbol": "MEMEF20",
+      "_type": "721"
+    },
+    {
+      "_address": "0x57C31c042Cb2F6a50F3dA70ADe4fEE20C86B7493",
+      "_name": "Block Art",
+      "_symbol": "EBA20",
+      "_type": "721"
+    },
+    {
+      "_address": "0xC58641aE25D1E368393cad5CCe2CcA3C80D8fFF6",
+      "_name": "Alpaca City",
+      "_symbol": "ALPA20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0xFF22233156b0A4Ae0172825E6891887e8F9d2585",
+      "_name": "Pepemon",
+      "_symbol": "PEPEMON20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0x60ACD58d00b2BcC9a8924fdaa54A2F7C0793B3b2",
+      "_name": "MEME LTD",
+      "_symbol": "MEME20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0x5b78eFDcc5ff2ECC141323491BA194293b955E81",
+      "_name": "Golfer",
+      "_symbol": "GOLF20",
+      "_type": "721"
+    },
+    {
+      "_address": "0x8cd81fB9282eC1Cb6d33542eDC2B562644C589cC",
+      "_name": "Sergs",
+      "_symbol": "SERGS20",
+      "_type": "1155"
+    },
+    {
+      "_address": "0x28fa4dEB8354f3c4f8D8f7DC095C7ddF5c4ba607",
+      "_name": "NFT20 WRAPLP",
+      "_symbol": "WRAPLP20",
+      "_type": "721"
+    },
+    {
+      "_address": "0xc2BdE1A2fA26890c8E6AcB10C91CC6D9c11F4a73",
+      "_name": "Hashmasks",
+      "_symbol": "MASK20",
+      "_type": "721"
+    },
+    {
+      "_address": "0x5998E8dF3e2e2278dDC80c293477f44d1164B82d",
+      "_name": "NFT20 Hashmasks",
+      "_symbol": "Hashmasks20",
+      "_type": "721"
+    }
+  ],
+  "startBlock": 11846825
+}

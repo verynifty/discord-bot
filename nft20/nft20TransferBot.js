@@ -116,9 +116,9 @@ let _etag;
 let _lastBlocknumber;
 let _lastTimestamp;
 
-const job = new CronJob("0 */10 * * * *", async function () {
+const job = new CronJob("0 */5 * * * *", async function () {
   let start = new Date();
-  console.log(`Begin Job (Every 10 minutes): ${start}`);
+  console.log(`Begin Job (Every 5 minutes): ${start}`);
   try {
     let response = await axios.get(apiUrl, {
       ...(_etag && {

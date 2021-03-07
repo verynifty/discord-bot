@@ -240,7 +240,7 @@ const job = new CronJob("0 */5 * * * *", async function () {
 
 client.on("ready", () => {
   console.log("Bot is ready");
-  channel = client.channels.cache.get("768223073526218803");
+  channel = client.channels.cache.get("817818456446992404");
   console.log("Channel connected");
 });
 

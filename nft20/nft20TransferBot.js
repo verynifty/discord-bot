@@ -206,7 +206,7 @@ const job = new CronJob("0 */5 * * * *", async function () {
     if (activity.length > 0) {
       // Update lastest block/time now that we have filtered the data
       const {
-        blockNumber: latestBlockNumber,
+        blocknumber: latestBlockNumber,
         timestamp: latestTimeStamp,
       } = activity[0];
       _lastBlocknumber = latestBlockNumber;

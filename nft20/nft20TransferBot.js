@@ -43,7 +43,10 @@ const formatMsg = (transfer) => {
     amount,
     type,
   } = transfer;
-  const asset = _assets.filter((a) => a.name === name)[0];
+  const asset = _assets.filter((a) => a.symbol === symbol)[0];
+  if (asset == null) {
+    console.log(`There is not an asset for name or the symbols do not match`);
+  }
   const {
     logo,
     color,

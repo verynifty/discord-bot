@@ -17,7 +17,7 @@ const GetAssets = async () => {
 
 // There is a lot of info we have to work with
 // Will need to figure out the best format for the messages
-const formatMsg = (transfer) => {
+const formatMsg = (transfer, offset = 0) => {
   const {
     name,
     symbol,
@@ -39,7 +39,8 @@ const formatMsg = (transfer) => {
   const { logo, color, uniswap, website } = asset;
 
   let nfts = [];
-  for (var i = 0; i < ids.length; i++) {
+  let end = offset + 14 > ids.length ? ids.length : offset + 14;
+  for (var i = offset; i < end; i++) {
     nfts.push({
       name: "\u200b",
       value: `[**${nft_name[i]}** **${
@@ -99,10 +100,18 @@ let channel;
 const postTransfers = (transfers) => {
   //Transfers will come in newest to oldest so reverse them for posting
   transfers.reverse();
-
   for (var i = 0; i < transfers.length; i++) {
-    const msgEmbed = formatMsg(transfers[i]);
-    channel.send(msgEmbed);
+    // Hard limit of 20 fields for discord embeds so transfers with more than 14 nfts
+    //  will need to be split into multiple posts
+    if (transfers[i].ids.length > 14) {
+      for (var offset = 0; offset < id.length; offset += 14) {
+        const msgEmbed = formatMsg(transfers[i], offset);
+        channel.send(msgEmbed);
+      }
+    } else {
+      const msgEmbed = formatMsg(transfers[i]);
+      channel.send(msgEmbed);
+    }
   }
 };
 

@@ -45,18 +45,11 @@ const formatMsg = (transfer) => {
   } = transfer;
   const asset = _assets.filter((a) => a.symbol === symbol)[0];
   if (asset == null) {
-    console.log(`There is not an asset for name or the symbols do not match`);
+    console.log(
+      `There is not an asset for ${name} or the symbols do not match`
+    );
   }
-  const {
-    logo,
-    color,
-    uniswap,
-    lpToken,
-    factory_version,
-    website,
-    description,
-    tags,
-  } = asset;
+  const { logo, color, uniswap, website } = asset;
 
   let nfts = [];
   for (var i = 0; i < ids.length; i++) {
@@ -68,34 +61,48 @@ const formatMsg = (transfer) => {
       inline: true,
     });
   }
+  const fields = [
+    ...nfts,
+    {
+      name: "\u200b",
+      value: "\u200b",
+    },
+    {
+      name: "\u200b",
+      value: `[**TxHash**](https://etherscan.io/tx/${transactionhash})`,
+      inline: true,
+    },
+    {
+      name: "\u200b",
+      value: `[**NFT20**](https://nft20.io/asset/${pool})`,
+      inline: true,
+    },
+    {
+      name: "\u200b",
+      value: `[**${symbol}**](https://etherscan.io/token/${pool})`,
+      inline: true,
+    },
+  ];
+  if (uniswap) {
+    fields.push({
+      name: "\u200b",
+      value: `[**Uniswap**](${uniswap})`,
+      inline: true,
+    });
+  }
+  if (website) {
+    fields.push({
+      name: "\u200b",
+      value: `[**Website**](${website})`,
+      inline: true,
+    });
+  }
   const msgEmbed = new Discord.MessageEmbed()
     .setColor(color ? color : "#ffffff")
     .setAuthor(name, logo, `https://nft20.io/asset/${pool}`)
     .setTitle(`NFT20 ${type}`)
     .setThumbnail(logo)
-    .addFields(
-      ...nfts,
-      {
-        name: "From: ",
-        value: `[${from}](https://etherscan.io/address/${from})`,
-      },
-      { name: "To: ", value: `[${to}](https://etherscan.io/address/${to})` },
-      {
-        name: "\u200b",
-        value: `[**TxHash**](https://etherscan.io/tx/${transactionhash})`,
-        inline: true,
-      },
-      {
-        name: "\u200b",
-        value: `[**NFT20**](https://nft20.io/asset/${pool})`,
-        inline: true,
-      },
-      {
-        name: "\u200b",
-        value: `[**${symbol}**](https://etherscan.io/token/${pool})`,
-        inline: true,
-      }
-    )
+    .addFields(fields)
     .setTimestamp(timestamp);
 
   return msgEmbed;
@@ -241,6 +248,18 @@ const job = new CronJob("0 */5 * * * *", async function () {
   console.log(`End Job (${endTime} ms): ${end}`);
 });
 
+const job2 = new CronJob("0 *02 */1 * * *", async function () {
+  let start = new Date();
+  console.log(
+    `Begin Job (Every hour on the second minute e.g. 01:02, 2:02, ...): ${start}`
+  );
+  console.log("Retrieving assets...");
+  await GetAssets();
+  const end = new Date();
+  const endTime = Math.abs(start - end);
+  console.log(`End Job (${endTime} ms): ${end}`);
+});
+
 client.on("ready", () => {
   console.log("Bot is ready");
   channel = client.channels.cache.get("817818456446992404");
@@ -254,5 +273,6 @@ const startBot = async () => {
   await client.login(process.env.DISCORD);
   console.log("Starting cron job...");
   job.start();
+  job2.start();
 };
 startBot();

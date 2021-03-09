@@ -19,28 +19,15 @@ const GetAssets = async () => {
 // Will need to figure out the best format for the messages
 const formatMsg = (transfer) => {
   const {
-    address,
-    nft,
-    nft_type,
     name,
     symbol,
-    lp_eth_balance,
-    lp_usd_balance,
-    nft_eth_price,
-    nft_usd_price,
-    blocknumber,
     transactionhash,
-    from,
     timestamp,
-    to,
     pool,
-    user,
     ids,
     amounts,
     nft_name,
     nft_image,
-    total_transfers,
-    amount,
     type,
   } = transfer;
   const asset = _assets.filter((a) => a.symbol === symbol)[0];
@@ -248,7 +235,7 @@ const job = new CronJob("0 */5 * * * *", async function () {
   console.log(`End Job (${endTime} ms): ${end}`);
 });
 
-const job2 = new CronJob("0 *02 */1 * * *", async function () {
+const job2 = new CronJob("0 2 */1 * * *", async function () {
   let start = new Date();
   console.log(
     `Begin Job (Every hour on the second minute e.g. 01:02, 2:02, ...): ${start}`

@@ -104,7 +104,7 @@ const postTransfers = (transfers) => {
     // Hard limit of 20 fields for discord embeds so transfers with more than 14 nfts
     //  will need to be split into multiple posts
     if (transfers[i].ids.length > 14) {
-      for (var offset = 0; offset < id.length; offset += 14) {
+      for (var offset = 0; offset < transfers[i].ids.length; offset += 14) {
         const msgEmbed = formatMsg(transfers[i], offset);
         channel.send(msgEmbed);
       }

@@ -1,151 +1,274 @@
 path = require("path");
 require("dotenv").config({
-  path: path.resolve(process.cwd(), "../example.env"),
+  path: path.resolve(process.cwd(), "./example.env"),
 });
 
-const nft20AbiFactory = require("../abis/Factory");
-const nft20AbiFactoryAddress = require("../contracts").Factory;
-const nft20AbiPair = require("../abis/Pair");
-const Web3 = require("web3");
-const web3 = new Web3(
-  new Web3.providers.WebsocketProvider(
-    `wss://mainnet.infura.io/ws/v3/${process.env.INFURA}`
-  )
-);
-
-const factoryInstance = new web3.eth.Contract(
-  nft20AbiFactory,
-  nft20AbiFactoryAddress
-);
-
-const fs = require("fs").promises;
-const pairPath = "./nft20/pairData.json";
-const BASE_DATA = {
-  CREATION_BLOCK: 11023280,
-  pairs: [],
-  startBlock: 11023280,
-};
-
-const UpdatePairData = async () => {
-  const jsonString = await fs.readFile(pairPath).catch((err) => {
-    err.code === "ENOENT"
-      ? console.log("No file found creating new one.")
-      : console.error(err);
-  });
-  let pairData = jsonString ? JSON.parse(jsonString) : BASE_DATA;
-  const { pairs, startBlock } = pairData;
-  let nft20pairs = (
-    await factoryInstance.getPastEvents("pairCreated", {
-      fromBlock: startBlock,
-      toBlock: "latest",
-    })
-  ).filter(({ returnValues: { newPair: pairAddress } }) => {
-    return !(pairAddress in pairs);
-  });
-  pairData.startBlock = await web3.eth.getBlockNumber();
-  if (nft20pairs.length > 0) {
-    await Promise.all(
-      nft20pairs.map(async (pair) => {
-        const { newPair: pairAddress } = pair.returnValues;
-        const pairInstance = new web3.eth.Contract(nft20AbiPair, pairAddress);
-
-        const info = await pairInstance.methods.getInfos().call();
-        const { _name, _symbol, _type } = info;
-        pairs.push({ _address: pairAddress, _name, _symbol, _type });
-      })
-    );
-    console.log("New pairs added.");
-  } else {
-    console.log("No new pairs to add.");
-  }
-  await fs
-    .writeFile(pairPath, JSON.stringify(pairData, null, 2))
-    .catch((err) => {
-      if (err) console.error(err);
-    });
-};
-
-const GetPairs = async () => {
-  const jsonString = await fs.readFile(pairPath).catch((err) => {
-    console.error(err);
-  });
-  return (pairData = jsonString ? JSON.parse(jsonString) : BASE_DATA);
-};
-
+const axios = require("axios");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const formatMsg = (transfer) => {
+let _assets;
+const GetAssets = async () => {
+  const response = await axios.get(
+    "https://raw.githubusercontent.com/verynifty/nft20-assets/master/assets.json"
+  );
+  _assets = response.data;
+};
+
+// There is a lot of info we have to work with
+// Will need to figure out the best format for the messages
+const formatMsg = (transfer, offset = 0) => {
   const {
-    transactionHash: txHash,
-    returnValues: { from, to, value },
+    name,
+    symbol,
+    transactionhash,
+    timestamp,
+    pool,
+    ids,
+    amounts,
+    nft_name,
+    nft_image,
+    type,
   } = transfer;
-  const { _name: coin, _symbol: symbol } = pair;
-  const convertedValue = web3.utils.fromWei(value, "ether");
-  const { [coin]: extraCoinData } = require("./nft20/pairDataExtra");
-  const { color, etherscan, icon, nft20, uniswap } = extraCoinData;
+  const asset = _assets.filter((a) => a.symbol === symbol)[0];
+  if (asset == null) {
+    console.log(
+      `There is not an asset for ${name} or the symbols do not match`
+    );
+  }
+  const { logo, color, uniswap, website } = asset;
+
+  let nfts = [];
+  let end = offset + 14 > ids.length ? ids.length : offset + 14;
+  for (var i = offset; i < end; i++) {
+    nfts.push({
+      name: "\u200b",
+      value: `[**${nft_name[i]}** **${
+        amounts[i] < 0 ? `${amounts[i]}` : `+${amounts[i]}`
+      }**\n(#${ids[i]})](${nft_image[i]})`,
+      inline: true,
+    });
+  }
+  const fields = [
+    ...nfts,
+    {
+      name: "\u200b",
+      value: "\u200b",
+    },
+    {
+      name: "\u200b",
+      value: `[**TxHash**](https://etherscan.io/tx/${transactionhash})`,
+      inline: true,
+    },
+    {
+      name: "\u200b",
+      value: `[**NFT20**](https://nft20.io/asset/${pool})`,
+      inline: true,
+    },
+    {
+      name: "\u200b",
+      value: `[**${symbol}**](https://etherscan.io/token/${pool})`,
+      inline: true,
+    },
+  ];
+  if (uniswap) {
+    fields.push({
+      name: "\u200b",
+      value: `[**Uniswap**](${uniswap})`,
+      inline: true,
+    });
+  }
+  if (website) {
+    fields.push({
+      name: "\u200b",
+      value: `[**Website**](${website})`,
+      inline: true,
+    });
+  }
   const msgEmbed = new Discord.MessageEmbed()
-    .setColor(color)
-    .setAuthor(coin, icon, nft20)
-    .setTitle("NFT20 Transfer")
-    .setThumbnail(icon)
-    .addFields(
-      { name: "From: ", value: `${from}` },
-      { name: "To: ", value: `${to}` },
-      {
-        name: "Amount: ",
-        value: `${convertedValue.toString()} $${symbol}`,
-      },
-      {
-        name: "\u200b",
-        value: `[**TxHash**](https://etherscan.io/search?f=0&q=${txHash})`,
-      },
-      { name: "\u200b", value: `[NFT20](${nft20})`, inline: true },
-      { name: "\u200b", value: `[Token](${etherscan})`, inline: true },
-      { name: "\u200b", value: `[Uniswap](${uniswap})`, inline: true }
-    )
-    .setTimestamp();
+    .setColor(color ? color : "#ffffff")
+    .setAuthor(name, logo, `https://nft20.io/asset/${pool}`)
+    .setTitle(`NFT20 ${type}`)
+    .setThumbnail(logo)
+    .addFields(fields)
+    .setTimestamp(timestamp);
 
   return msgEmbed;
 };
 
-const ScanForTransfers = async () => {
-  const { pairs } = await GetPairs();
-  pairs.forEach((pair) => {
-    const { _address } = pair;
-    const pairInstance = new web3.eth.Contract(nft20AbiPair, _address);
-    pairInstance.events
-      .Transfer()
-      .on("data", async (transfer) => {
-        const msgEmbed = formatMsg(transfer);
+let channel;
+const postTransfers = (transfers) => {
+  //Transfers will come in newest to oldest so reverse them for posting
+  transfers.reverse();
+  for (var i = 0; i < transfers.length; i++) {
+    // Hard limit of 20 fields for discord embeds so transfers with more than 14 nfts
+    //  will need to be split into multiple posts
+    if (transfers[i].ids.length > 14) {
+      for (var offset = 0; offset < id.length; offset += 14) {
+        const msgEmbed = formatMsg(transfers[i], offset);
         channel.send(msgEmbed);
-      })
-      .on("error", console.error);
-  });
+      }
+    } else {
+      const msgEmbed = formatMsg(transfers[i]);
+      channel.send(msgEmbed);
+    }
+  }
 };
 
-const PostPastTransfer = async () => {
-  const { pairs } = await GetPairs();
-  pair = pairs[3];
-  const { _address } = pair;
-  const pairInstance = new web3.eth.Contract(nft20AbiPair, _address);
+const CronJob = require("cron").CronJob;
+const apiUrl = "https://api.nft20.io/activity";
+const perPage = 100;
+let _etag;
+let _lastBlocknumber;
+let _lastTimestamp;
 
-  const pastTransfers = await pairInstance.getPastEvents("Transfer", {
-    fromBlock: 11806191,
-    toBlock: "latest",
-  });
-  const channel = client.channels.cache.get("768223073526218803");
+const job = new CronJob("0 */5 * * * *", async function () {
+  let start = new Date();
+  console.log(`Begin Job (Every 5 minutes): ${start}`);
+  try {
+    let response = await axios.get(apiUrl, {
+      ...(_etag && {
+        headers: {
+          "If-None-Match": _etag,
+        },
+      }),
+      params: {
+        page: 1,
+        perPage,
+      },
+    });
+    const {
+      data,
+      headers: { etag },
+    } = response;
+    // Save etag to utilize caching
+    _etag = etag;
 
-  const transfer = pastTransfers[0];
-  const msgEmbed = formatMsg(transfer);
-  channel.send(msgEmbed);
-};
+    // Set the last block/time to the first event if the vars are null
+    // If the bot is started we do not want to post duplicated transfers
+    // Will result in loss of transfer posts if a transfer happens in between
+    // bot down time. Could eventually add in a way to start from the right spot.
+    if (_lastBlocknumber == null || _lastTimestamp == null) {
+      console.log(
+        "Saved block or timestamp is null, resetting to newest event"
+      );
+      const { blocknumber, timestamp } = data.data[0];
+      _lastBlocknumber = blocknumber;
+      _lastTimestamp = new Date(timestamp);
+    }
 
-const RunNFT20TransferBot = async () => {
-  await UpdatePairData();
-  console.log("Update done. Starting transfer scanning");
+    // Our activity variable will hold all data
+    let activity = [];
+
+    // Check if we need to paginate (will run once always to add page 1 to activity)
+    // We need to paginate if more than 1 page's worths of transactions have occured since last job
+    // Repeat check at each page to determine when to stop (dont go through all pages if we don't have to)
+    let paging = true;
+    let currentPage = data;
+    while (paging) {
+      const { data, pagination } = currentPage;
+      const { currentPage: pageNumber, lastPage } = pagination;
+      // Add current page data to activity
+      activity.push(...data);
+
+      const oldestEvent = data[data.length - 1];
+
+      const {
+        blocknumber: oldestBlocknumber,
+        timestamp: oldestTimestamp,
+      } = oldestEvent;
+
+      // Compare last event on page to last stored event to see if we need next page
+      if (
+        pageNumber >= lastPage ||
+        (oldestBlocknumber <= _lastBlocknumber &&
+          new Date(oldestTimestamp) <= _lastTimestamp)
+      ) {
+        paging = false;
+        continue;
+      }
+
+      // Get next page
+      const nextPage = pageNumber + 1;
+      console.log("Retrieving page ", nextPage);
+      const response = await axios.get(apiUrl, {
+        params: {
+          page: nextPage,
+          perPage,
+        },
+      });
+      currentPage = response.data;
+    }
+    // Filter events based on block/time since last run
+    activity = activity.filter(({ blocknumber, timestamp }) => {
+      return (
+        blocknumber > _lastBlocknumber && new Date(timestamp) > _lastTimestamp
+      );
+    });
+
+    if (activity.length > 0) {
+      // Update lastest block/time now that we have filtered the data
+      const {
+        blocknumber: latestBlockNumber,
+        timestamp: latestTimeStamp,
+      } = activity[0];
+      _lastBlocknumber = latestBlockNumber;
+      _lastTimestamp = new Date(latestTimeStamp);
+
+      // We have events to post!
+      console.log(`There are ${activity.length} events to post!`);
+      postTransfers(activity);
+    } else {
+      console.log("No events after filtering");
+    }
+  } catch (error) {
+    const { response } = error;
+    if (response != null) {
+      const { status } = response;
+      switch (status) {
+        case 304:
+          console.log("304: No new data");
+          break;
+        case 404:
+          console.log("404: Server error");
+          break;
+        default:
+          console.log("Response Status: ", status);
+      }
+    } else {
+      console.log(error);
+    }
+  }
+  const end = new Date();
+  const endTime = Math.abs(start - end);
+  console.log(`End Job (${endTime} ms): ${end}`);
+});
+
+const job2 = new CronJob("0 2 */1 * * *", async function () {
+  let start = new Date();
+  console.log(
+    `Begin Job (Every hour on the second minute e.g. 01:02, 2:02, ...): ${start}`
+  );
+  console.log("Retrieving assets...");
+  await GetAssets();
+  const end = new Date();
+  const endTime = Math.abs(start - end);
+  console.log(`End Job (${endTime} ms): ${end}`);
+});
+
+client.on("ready", () => {
+  console.log("Bot is ready");
+  channel = client.channels.cache.get("817818456446992404");
+  console.log("Channel connected");
+});
+
+const startBot = async () => {
+  console.log("Starting bot...");
+  console.log("Retrieving assets...");
+  await GetAssets();
   await client.login(process.env.DISCORD);
-  await PostPastTransfer();
+  console.log("Starting cron job...");
+  job.start();
+  job2.start();
 };
-
-RunNFT20TransferBot();
+startBot();

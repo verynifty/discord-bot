@@ -1,6 +1,6 @@
 path = require("path");
 require("dotenv").config({
-  path: path.resolve(process.cwd(), "./example.env"),
+  path: path.resolve(process.cwd(), "./.env"),
 });
 
 const axios = require("axios");

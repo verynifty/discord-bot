@@ -36,7 +36,7 @@ const formatMsg = (transfer, offset = 0) => {
       `There is not an asset for ${name} or the symbols do not match`
     );
   }
-  const { logo, color, uniswap, website } = asset;
+  const { logo, color, uniswap, website } = { ...asset };
 
   let nfts = [];
   let end = offset + 14 > ids.length ? ids.length : offset + 14;
@@ -88,6 +88,11 @@ const formatMsg = (transfer, offset = 0) => {
   const msgEmbed = new Discord.MessageEmbed()
     .setColor(color ? color : "#ffffff")
     .setAuthor(name, logo, `https://nft20.io/asset/${pool}`)
+    .setDescription(
+      asset
+        ? ""
+        : "(Please update [assets.json](https://github.com/verynifty/nft20-assets/blob/master/assets.json) for this asset)"
+    )
     .setTitle(`NFT20 ${type}`)
     .setThumbnail(logo)
     .addFields(fields)

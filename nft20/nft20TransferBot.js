@@ -1,6 +1,6 @@
 path = require("path");
 require("dotenv").config({
-  path: path.resolve(process.cwd(), "./example.env"),
+  path: path.resolve(process.cwd(), "../.env"),
 });
 
 const axios = require("axios");
@@ -9,10 +9,14 @@ const client = new Discord.Client();
 
 let _assets;
 const GetAssets = async () => {
-  const response = await axios.get(
+  const matic = await axios.get(
+    "https://raw.githubusercontent.com/verynifty/nft20-assets/master/assets_matic.json"
+  );
+
+  const mainnet = await axios.get(
     "https://raw.githubusercontent.com/verynifty/nft20-assets/master/assets.json"
   );
-  _assets = response.data;
+  _assets = mainnet.data.concat(matic.data);
 };
 
 // There is a lot of info we have to work with
@@ -116,10 +120,11 @@ const postTransfers = (transfers) => {
 };
 
 const CronJob = require("cron").CronJob;
-const apiUrl = "https://api.nft20.io/activity";
+let apiUrl = "https://api.nft20.io/activity";
+
 const perPage = 100;
 let _etag;
-let _lastBlocknumber;
+// let _lastBlocknumber;
 let _lastTimestamp;
 
 const job = new CronJob("0 */5 * * * *", async function () {
@@ -148,14 +153,16 @@ const job = new CronJob("0 */5 * * * *", async function () {
     // If the bot is started we do not want to post duplicated transfers
     // Will result in loss of transfer posts if a transfer happens in between
     // bot down time. Could eventually add in a way to start from the right spot.
-    if (_lastBlocknumber == null || _lastTimestamp == null) {
+    if (_lastTimestamp == null) {
       console.log(
         "Saved block or timestamp is null, resetting to newest event"
       );
       const { blocknumber, timestamp } = data.data[0];
-      _lastBlocknumber = blocknumber;
+      // _lastBlocknumber = blocknumber;
       _lastTimestamp = new Date(timestamp);
     }
+
+    console.log(data.data);
 
     // Our activity variable will hold all data
     let activity = [];
@@ -181,8 +188,8 @@ const job = new CronJob("0 */5 * * * *", async function () {
       // Compare last event on page to last stored event to see if we need next page
       if (
         pageNumber >= lastPage ||
-        (oldestBlocknumber <= _lastBlocknumber &&
-          new Date(oldestTimestamp) <= _lastTimestamp)
+        // (oldestBlocknumber <= _lastBlocknumber &&
+        new Date(oldestTimestamp) <= _lastTimestamp
       ) {
         paging = false;
         continue;
@@ -199,12 +206,15 @@ const job = new CronJob("0 */5 * * * *", async function () {
       });
       currentPage = response.data;
     }
+
+    console.log("last timestamp: ", _lastTimestamp);
     // Filter events based on block/time since last run
-    activity = activity.filter(({ blocknumber, timestamp }) => {
-      return (
-        blocknumber > _lastBlocknumber && new Date(timestamp) > _lastTimestamp
-      );
+    activity = activity.filter(({ timestamp }) => {
+      console.log(new Date(timestamp));
+      return new Date(timestamp) > _lastTimestamp;
     });
+
+    console.log(activity);
 
     if (activity.length > 0) {
       // Update lastest block/time now that we have filtered the data
@@ -268,6 +278,7 @@ const startBot = async () => {
   await GetAssets();
   await client.login(process.env.DISCORD);
   console.log("Starting cron job...");
+
   job.start();
   job2.start();
 };

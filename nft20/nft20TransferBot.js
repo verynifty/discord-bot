@@ -273,7 +273,7 @@ const startBot = async () => {
   await GetAssets();
   await client.login(process.env.DISCORD);
   console.log("Starting cron job...");
-  job.start();
-  job2.start();
+  newPoolsCron = require("./cronjobs/newPoolsCron");
+  newPoolsCron.start();
 };
 startBot();

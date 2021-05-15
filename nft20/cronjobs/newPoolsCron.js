@@ -8,10 +8,17 @@ const log = (msg) => {
   console.log(`[${now.toUTCString()}] :: ${jobPrefifx}${msg}`);
 };
 
-// There is a lot of info we have to work with
-// Will need to figure out the best format for the messages
+const _FlavorDescriptions = [
+  "COME AND DISCOVER THE FLOOR PRICE",
+  "NEW NFTs AWAIT",
+  "ARBITRAGE OPPORTUNITIES HERE",
+  "HOT & LONELY NFTs IN YOUR AREA",
+];
 const formatMsg = (pool) => {
   const { address, name, logo_url } = pool;
+
+  const randDescription =
+    _FlavorDescriptions[Math.floor(Math.random() * _FlavorDescriptions.length)];
 
   const msgEmbed = new Discord.MessageEmbed()
     .setColor("#fffff")
@@ -22,8 +29,8 @@ const formatMsg = (pool) => {
     )
     .setDescription(
       logo_url && name
-        ? `[Come checkout the asset here](https://nft20.io/asset/${address})`
-        : `[Come checkout the asset here](https://nft20.io/asset/${address}) \n
+        ? `[${randDescription}](https://nft20.io/asset/${address})`
+        : `[${randDescription}](https://nft20.io/asset/${address}) \n
         (Please update [assets.json](https://github.com/verynifty/nft20-assets/blob/master/assets.json) for this asset)`
     )
     .setTitle(`A NEW ASSET HAS BEEN ADDED!`)
@@ -118,8 +125,9 @@ const newPoolsCron = new CronJob({
 
           // Update newPools with the pool data for the new pools
           newPools.push(
-            data.filter(({ address }) => !_pools.includes(address))
+            ...data.filter(({ address }) => !_pools.includes(address))
           );
+
           // Update _pools with new addresses
           _pools.push(...newPools.map(({ address }) => address));
 
@@ -144,9 +152,8 @@ const newPoolsCron = new CronJob({
 
         // post new pools
         log(`Posting ${newPools.length} new pool(s)...`);
-        console.log(newPools);
         newPools.forEach((pool) => {
-          console.log(pool);
+          log(`Posting pool with address ${pool.address}`);
           const msgEmbed = formatMsg(pool);
           channel.send(msgEmbed);
         });

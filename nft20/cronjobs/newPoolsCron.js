@@ -1,6 +1,6 @@
 const axios = require("axios");
+const CronJob = require("cron").CronJob;
 const Discord = require("discord.js");
-const client = new Discord.Client();
 
 const jobPrefifx = "NewPoolCronJob: ";
 const log = (msg) => {
@@ -39,21 +39,14 @@ const formatMsg = (pool) => {
   return msgEmbed;
 };
 
-const CronJob = require("cron").CronJob;
 const poolsUrl = "https://api.nft20.io/pools";
 const perPage = 100;
+let _channel = require("../BotRunner").getChannel();
+let _firstRun = true;
 let _etag;
 let _totalPools;
 // We will store only the pool's address
 let _pools = [];
-
-let channel;
-client.on("ready", () => {
-  log("Bot is ready");
-  channel = client.channels.cache.get("813036166852509739");
-  log("Channel connected");
-});
-
 const newPoolsCron = new CronJob({
   cronTime: "0 */30 * * * *",
   onTick: async function () {
@@ -82,10 +75,11 @@ const newPoolsCron = new CronJob({
 
       // First run connect bot, update pool total, and update pools data
       if (_totalPools == null) {
-        log("First Run. Initalizing data...");
-        log("Starting bot...");
-        await client.login(process.env.DISCORD);
-
+        if (_firstRun) {
+          log("First Run. Initalizing data...");
+          _firstRun = false;
+        }
+        log("Pool count is null resetting pool count");
         _totalPools = total;
         let paging = true;
         let currentPage = data;
@@ -155,7 +149,7 @@ const newPoolsCron = new CronJob({
         newPools.forEach((pool) => {
           log(`Posting pool with address ${pool.address}`);
           const msgEmbed = formatMsg(pool);
-          channel.send(msgEmbed);
+          _channel.send(msgEmbed);
         });
       } else {
         log(`No new pools to post`);

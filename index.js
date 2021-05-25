@@ -1,5 +1,5 @@
 path = require("path");
-require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
+require("dotenv").config({ path: path.resolve(process.cwd(), "./.env") });
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -57,6 +57,30 @@ client.on("ready", () => {
         message.channel.send(msg);
       }
     }
+  });
+
+  command(client, "soon", async (message, args) => {
+    // const giphy = require("giphy-api")({
+    //   apiKey: process.env.GIPHY,
+    //   https: true,
+    // });
+
+    const gifs = [
+      "https://media4.giphy.com/media/vccbe85COvN1DjKTti/giphy.gif?cid=ecf05e47rhcxajlcvcyv3rxphb3off7whq5zzjo6286trq8z&rid=giphy.gif&ct=g",
+      "https://media0.giphy.com/media/tzHn7A5mohSfe/200w.webp?cid=ecf05e47eoszmf792ko1s4y812h4e2uwe8xsd8autzstuarj&rid=200w.webp&ct=g",
+      "https://media4.giphy.com/media/5xtDarzgzG6eu6uVwI0/200w.webp?cid=ecf05e47eoszmf792ko1s4y812h4e2uwe8xsd8autzstuarj&rid=200w.webp&ct=g",
+      "https://media4.giphy.com/media/hvS1eKlR75hMr0l7VJ/giphy.webp?cid=ecf05e47eoszmf792ko1s4y812h4e2uwe8xsd8autzstuarj&rid=giphy.webp&ct=g",
+      "https://media3.giphy.com/media/5uuRWk7fiXeM0/giphy.webp?cid=ecf05e47eoszmf792ko1s4y812h4e2uwe8xsd8autzstuarj&rid=giphy.webp&ct=g",
+      "https://media2.giphy.com/media/H7SaUQ5vEbocJqYZKO/200w.webp?cid=ecf05e47knp1o2tq6399xmbo8iat5olarl4pdom7eixx30at&rid=200w.webp&ct=g",
+      "https://media2.giphy.com/media/hoW29qZ2FcaQg/giphy.gif?cid=ecf05e47knp1o2tq6399xmbo8iat5olarl4pdom7eixx30at&rid=giphy.gif&ct=g",
+      "https://media4.giphy.com/media/l2Jeb4JPl96GFSAEw/giphy.gif?cid=ecf05e47knp1o2tq6399xmbo8iat5olarl4pdom7eixx30at&rid=giphy.gif&ct=g",
+      "",
+    ];
+
+    const random = Math.floor(Math.random() * gifs.length);
+
+    // const gif = await giphy.search({ q: "coming soon", rating: "p" });
+    message.channel.send(gifs[random]);
   });
 
   command(client, "countdown", async (message, args) => {
@@ -135,9 +159,9 @@ client.on("ready", () => {
   });
 });
 
-// mayb start bot here
-const contracts = require("./contracts");
-const PairABI = require("./abis/Pair.sjon");
-const FactoryABI = require("./abis/Factory.sjon");
+// // mayb start bot here
+// const contracts = require("./contracts");
+// const PairABI = require("../abis/Pair.sjon");
+// const FactoryABI = require("../abis/Factory.sjon");
 
 client.login(process.env.DISCORD);

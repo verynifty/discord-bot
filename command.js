@@ -5,8 +5,8 @@ module.exports = (client, aliases, callback) => {
   client.on("message", (message) => {
     const { content } = message;
     aliases.forEach((alias) => {
-      const command = `/${alias}`;
-      const args = content.slice("/".length).trim().split(" ");
+      const command = `!${alias}`;
+      const args = content.slice("!".length).trim().split(" ");
 
       if (content.startsWith(`${command} `) || content === command) {
         // console.log("running command", command);

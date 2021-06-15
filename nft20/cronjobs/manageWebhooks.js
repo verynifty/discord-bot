@@ -14,7 +14,9 @@ const webhooks = [
 exports.manageWebhooks = async (data, msgEmbed) => {
   const result = webhooks.find(({ name }) => name === data.name);
 
-  //   format msg
+ 
+  if (result) {
+     //   format msg
   const embed = [
     {
       title: `NEW ${data.type.toUpperCase()}`,
@@ -45,7 +47,6 @@ exports.manageWebhooks = async (data, msgEmbed) => {
       },
     },
   ];
-  if (result) {
     axios.post(
       `https://discord.com/api/webhooks/${result.id}/${result.token}`,
       {

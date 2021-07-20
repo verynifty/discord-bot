@@ -11,10 +11,8 @@ const log = (msg) => {
   console.log(`[${now.toUTCString()}] :: ${jobPrefifx}${msg}`);
 };
 
-let _channel = require("../BotRunner").getChannel();
-let _firstRun = true;
-let _etag;
-let _totalPools;
+let _channel = require("../BotRunner").getCudlChannel();
+
 // We will store only the pool's address
 let _pools = [];
 const newPoolsCron = new CronJob({
@@ -24,7 +22,7 @@ const newPoolsCron = new CronJob({
     log(`Begin Job (Every 30 minutes)`);
     try {
       // do logic to check and send
-      _channel.send("test");
+      _channel.send("#0 Enea just got BONKED by '#'2 Adam for 10 $CUDL 🌟🔨");
     } catch (error) {
       log(error);
     }

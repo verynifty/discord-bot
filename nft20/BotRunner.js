@@ -22,6 +22,7 @@ let _channel;
 client.on("ready", () => {
   log("Bot is ready");
   _channel = client.channels.cache.get("817818456446992404");
+
   log("Channel connected");
   startBot();
 });
@@ -36,5 +37,9 @@ const startBot = () => {
 module.exports = {
   getChannel: () => {
     return _channel;
+  },
+  getCudlChannel: () => {
+    const cudl_channel = client.channels.cache.get("802629514231545857");
+    return cudl_channel;
   },
 };

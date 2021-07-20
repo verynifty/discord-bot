@@ -111,6 +111,10 @@ const postTransfers = (transfers) => {
         // here we check if we should send to other channels
         manageWebhooks(msgEmbed);
         const msgEmbed = formatMsg(transfers[i], offset);
+
+        // uncomment to start running
+        manageWebhooks(transfers[i], msgEmbed);
+
         _channel.send(msgEmbed);
       }
     } else {
@@ -119,6 +123,7 @@ const postTransfers = (transfers) => {
       // here we check if we should send to other channels
       manageWebhooks(msgEmbed);
 
+      // uncomment to start running
       _channel.send(msgEmbed);
     }
   }

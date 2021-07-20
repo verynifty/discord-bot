@@ -83,6 +83,26 @@ client.on("ready", () => {
     message.channel.send(gifs[random]);
   });
 
+  command(client, "fatality", async (message, args) => {
+    const msgs = await soon();
+
+    if (msgs.length == 0) {
+      message.channel.send("No pets dying soon");
+    } else {
+      for (msg of msgs) {
+        message.channel.send(msg);
+      }
+    }
+  });
+
+  command(client, "enea", async (message, args) => {
+    // const gif = await giphy.search({ q: "coming soon", rating: "p" });
+
+    const link =
+      "https://tenor.com/view/weird-champ-weird-champ-pogchamp-pog-gif-13780848";
+    message.channel.send(link);
+  });
+
   command(client, "countdown", async (message, args) => {
     const now = dayjs().utc().format(); //in utc
     const midnight = dayjs().utc().hour(23).minute(59).format(); //utc

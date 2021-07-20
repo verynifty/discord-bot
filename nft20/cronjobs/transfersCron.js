@@ -2,6 +2,8 @@ const axios = require("axios");
 const CronJob = require("cron").CronJob;
 const Discord = require("discord.js");
 
+const { manageWebhooks } = require("./manageWebhooks");
+
 const jobPrefifx = "TransfersCronJob: ";
 const log = (msg) => {
   const now = new Date();
@@ -106,11 +108,17 @@ const postTransfers = (transfers) => {
     // will need to be split into multiple posts
     if (transfers[i].ids.length > 14) {
       for (var offset = 0; offset < transfers[i].ids.length; offset += 14) {
+        // here we check if we should send to other channels
+        manageWebhooks(msgEmbed);
         const msgEmbed = formatMsg(transfers[i], offset);
         _channel.send(msgEmbed);
       }
     } else {
       const msgEmbed = formatMsg(transfers[i]);
+
+      // here we check if we should send to other channels
+      manageWebhooks(msgEmbed);
+
       _channel.send(msgEmbed);
     }
   }
@@ -122,7 +130,7 @@ let _firstRun = true;
 let _etag;
 let _lastTimestamp;
 const transfersCron = new CronJob({
-  cronTime: "0 */5 * * * *",
+  cronTime: "0 */2 * * * *",
   onTick: async function () {
     let start = new Date();
     log(`Begin Job (Every 5 minutes)`);

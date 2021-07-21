@@ -135,7 +135,7 @@ let _firstRun = true;
 let _etag;
 let _lastTimestamp;
 const transfersCron = new CronJob({
-  cronTime: "0 */2 * * * *",
+  cronTime: "0 */5 * * * *",
   onTick: async function () {
     let start = new Date();
     log(`Begin Job (Every 5 minutes)`);

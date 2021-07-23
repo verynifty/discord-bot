@@ -4,7 +4,7 @@ require("dotenv").config({ path: path.resolve(process.cwd(), "./.env") });
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const { soon, getVnft } = require("./controllers.js");
+const { soon, getVnft, getCudlPet } = require("./controllers.js");
 
 const BigNumber = require("bignumber.js");
 
@@ -45,6 +45,38 @@ client.on("ready", () => {
         `HP: ${vnft.hp_lastseen}  \n` +
         `Rarity: ${vnft.rarity}  \n`
     );
+  });
+
+  command(client, "pet", async (message, args) => {
+    id = args[1];
+    const pet = await getCudlPet(id); // await ctx.reply(data);
+
+    if (pet) {
+      // const starvingAt = dayjs(pet.timeuntilstarving * 1000);
+      // const todHrsLeft = starvingAt.diff(dayjs(), "hours");
+
+      // const tod = !vnft.isdead ? `TOD: ${todHrsLeft} hrs` : `TOD: dead`;
+
+      const expectedReward = new BigNumber(pet.expected_reward);
+
+      message.channel.send(
+        `ID: #${pet.pet_id} \n` +
+          // `${tod} \n` +
+          // `level: ${pet.level} \n` +
+          `owner: ${pet.owner} \n` +
+          // `Last Mined: ${dayjs(pet.lasttimemined * 1000).format(
+          //   "D-M HH:mm"
+          // )} \n` +
+          `score: ${pet.score} \n` +
+          `current reward: ${expectedReward
+            .shiftedBy(-18)
+            .toFixed(2)} $CUDL \n` +
+          `isAlive: ${pet.is_alive}  \n` +
+          `tod: ${pet.tod} \n`
+      );
+    } else {
+      message.channel.send(`No pet id ${id} found.`);
+    }
   });
 
   command(client, "fatality", async (message, args) => {

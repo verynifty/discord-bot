@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const axios = require("axios");
 exports.soon = async () => {
   const ONE_DAY = 24 * 60 * 60;
   let connectInfos = {
@@ -57,5 +58,12 @@ exports.getVnft = async (id) => {
   client.release;
   if (res.rows) {
     return res.rows[0];
+  }
+};
+
+exports.getCudlPet = async (id) => {
+  const { data } = await axios.get(`https://api.nft20.io/cudl/${id}`);
+  if (data.pet.length > 0) {
+    return data.pet[0];
   }
 };

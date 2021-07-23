@@ -19,10 +19,27 @@ const newPoolsCron = new CronJob({
   cronTime: "* * * * *",
   onTick: async function () {
     let start = new Date();
-    log(`Begin Job (Every 30 minutes)`);
+    log(`Begin Job (Every 1 minutes)`);
     try {
       // do logic to check and send
-      _channel.send("#0 Enea just got BONKED by '#'2 Adam for 10 $CUDL 🌟🔨");
+      const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
+
+      const bonks = data.bonks;
+      for (const bonk of bonks) {
+        const oneMinute = 60 * 1000; /* ms */
+        const bonkDate = new Date(bonk.timestamp);
+
+        if (new Date() - bonkDate <= oneMinute) {
+          const msg =
+            bonk.attacker == bonk.winner
+              ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
+              : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
+
+          _channel.send(msg);
+        }
+
+        // console.log("bonk! ", bonk);
+      }
     } catch (error) {
       log(error);
     }

@@ -72,6 +72,11 @@ client.on("ready", () => {
             .shiftedBy(-18)
             .toFixed(2)} $CUDL \n` +
           `isAlive: ${pet.is_alive}  \n` +
+          `care taker: ${
+            pet.caretaker !== "0x0000000000000000000000000000000000000000"
+              ? pet.caretaker
+              : "false"
+          } \n` +
           `tod: ${dayjs(pet.tod).from(dayjs())} \n`
       );
     } else {

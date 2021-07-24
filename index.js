@@ -72,7 +72,7 @@ client.on("ready", () => {
             .shiftedBy(-18)
             .toFixed(2)} $CUDL \n` +
           `isAlive: ${pet.is_alive}  \n` +
-          `tod: ${pet.tod} \n`
+          `tod: ${dayjs(pet.tod).from(dayjs())} \n`
       );
     } else {
       message.channel.send(`No pet id ${id} found.`);

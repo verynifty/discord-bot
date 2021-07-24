@@ -63,7 +63,7 @@ client.on("ready", () => {
         `ID: #${pet.pet_id} \n` +
           // `${tod} \n` +
           // `level: ${pet.level} \n` +
-          `owner: ${pet.owner} \n` +
+          `owner: ${pet.owner.slice(0, 9)} \n` +
           // `Last Mined: ${dayjs(pet.lasttimemined * 1000).format(
           //   "D-M HH:mm"
           // )} \n` +
@@ -74,7 +74,7 @@ client.on("ready", () => {
           `isAlive: ${pet.is_alive}  \n` +
           `care taker: ${
             pet.caretaker !== "0x0000000000000000000000000000000000000000"
-              ? pet.caretaker
+              ? pet.caretaker.slice(0, 9)
               : "false"
           } \n` +
           `tod: ${dayjs(pet.tod).from(dayjs())} \n`

@@ -33,6 +33,7 @@ const startBot = () => {
   require("./cronjobs/newPoolsCron").start();
   require("./cronjobs/transfersCron").start();
   require("./cronjobs/bonkCron").start(); //uncomment when ready
+  require("./cronjobs/soonDeadCron").start(); //uncomment when ready
 };
 module.exports = {
   getChannel: () => {

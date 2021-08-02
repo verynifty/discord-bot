@@ -15,16 +15,16 @@ let _channel = require("../BotRunner").getCudlChannel();
 
 // We will store only the pool's address
 let _pools = [];
-const bonkCron = new CronJob({
-  cronTime: "* * * * *",
+const soonDeadCron = new CronJob({
+  cronTime: "* * * * *", //*/30 * * * *
   onTick: async function () {
     let start = new Date();
-    log(`Bonk Bot Begin Job (Every 1 minutes)`);
+    log(`SoonDead Bot Begin Job (Every 1 minutes)`);
     try {
       // do logic to check and send
-      const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
+      const { data } = await axios.get("https://api.nft20.io/cudl/upcoming");
 
-      const bonks = data.bonks;
+      const upcoming = data;
 
       let lastBonkBlock = parseInt(bonks[0].blocknumber);
 
@@ -32,17 +32,17 @@ const bonkCron = new CronJob({
 
       if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
         for (const bonk of bonks) {
-          // const oneMinute = 60 * 1000; /* ms */
-          // const bonkDate = new Date(bonk.timestamp);
+          const oneMinute = 60 * 1000; /* ms */
+          const bonkDate = new Date(bonk.timestamp);
 
-          // if (new Date() - bonkDate <= oneMinute) {
-          const msg =
-            bonk.attacker == bonk.winner
-              ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
-              : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
+          if (new Date() - bonkDate <= oneMinute) {
+            const msg =
+              bonk.attacker == bonk.winner
+                ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
+                : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
 
-          _channel.send(msg);
-          // }
+            _channel.send(msg);
+          }
         }
 
         // console.log("bonk! ", bonk);
@@ -57,4 +57,4 @@ const bonkCron = new CronJob({
   runOnInit: true,
 });
 
-module.exports = bonkCron;
+module.exports = soonDeadCron;

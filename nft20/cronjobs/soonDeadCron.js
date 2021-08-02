@@ -22,7 +22,7 @@ let _channel = require("../BotRunner").getCudlChannel();
 // We will store only the pool's address
 let _pools = [];
 const soonDeadCron = new CronJob({
-  cronTime: "* * * * *", //*/30 * * * *
+  cronTime: "*/30 * * * *", //*/30 * * * *
   onTick: async function () {
     let start = new Date();
     log(`SoonDead Bot Begin Job (Every 1 minutes)`);

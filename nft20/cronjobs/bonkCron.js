@@ -16,7 +16,7 @@ let _channel = require("../BotRunner").getCudlChannel();
 // We will store only the pool's address
 let _pools = [];
 
-let lastBonkBlock;
+let lastBonkBlock = 12946429;
 let firstRun = true;
 
 const bonkCron = new CronJob({
@@ -30,7 +30,7 @@ const bonkCron = new CronJob({
 
       const bonks = data.bonks;
 
-      if (lastBonkBlock == null) {
+      if (lastBonkBlock == 12946429) {
         if (firstRun) {
           log("First Run Bonk Bot. Initalizing data...");
           firstRun = false;

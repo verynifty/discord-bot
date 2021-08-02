@@ -25,7 +25,7 @@ const bonkCron = new CronJob({
       const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
 
       const bonks = data.bonks;
-
+      let lastBonkBlock;
       console.log("lastBonkBlock ", lastBonkBlock);
 
       if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
@@ -43,7 +43,7 @@ const bonkCron = new CronJob({
           // }
         }
 
-        let lastBonkBlock = parseInt(bonks[0].blocknumber);
+        lastBonkBlock = parseInt(bonks[0].blocknumber);
 
         // console.log("bonk! ", bonk);
       }

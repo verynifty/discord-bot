@@ -15,27 +15,34 @@ let _channel = require("../BotRunner").getCudlChannel();
 
 // We will store only the pool's address
 let _pools = [];
-const newPoolsCron = new CronJob({
+const cudlCron = new CronJob({
   cronTime: "* * * * *",
   onTick: async function () {
     let start = new Date();
-    log(`Begin Job (Every 1 minutes)`);
+    log(`Bonk Bot Begin Job (Every 1 minutes)`);
     try {
       // do logic to check and send
       const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
 
       const bonks = data.bonks;
-      for (const bonk of bonks) {
-        const oneMinute = 60 * 1000; /* ms */
-        const bonkDate = new Date(bonk.timestamp);
 
-        if (new Date() - bonkDate <= oneMinute) {
-          const msg =
-            bonk.attacker == bonk.winner
-              ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
-              : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
+      let lastBonkBlock = parseInt(bonks[0].blocknumber);
 
-          _channel.send(msg);
+      console.log("lastBonkBlock ", lastBonkBlock);
+
+      if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
+        for (const bonk of bonks) {
+          const oneMinute = 60 * 1000; /* ms */
+          const bonkDate = new Date(bonk.timestamp);
+
+          if (new Date() - bonkDate <= oneMinute) {
+            const msg =
+              bonk.attacker == bonk.winner
+                ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
+                : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
+
+            _channel.send(msg);
+          }
         }
 
         // console.log("bonk! ", bonk);
@@ -50,4 +57,4 @@ const newPoolsCron = new CronJob({
   runOnInit: true,
 });
 
-module.exports = newPoolsCron;
+module.exports = cudlCron;

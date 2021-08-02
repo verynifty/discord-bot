@@ -15,6 +15,9 @@ let _channel = require("../BotRunner").getCudlChannel();
 
 // We will store only the pool's address
 let _pools = [];
+
+let lastBonkBlock = 0;
+
 const bonkCron = new CronJob({
   cronTime: "* * * * *",
   onTick: async function () {
@@ -25,7 +28,7 @@ const bonkCron = new CronJob({
       const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
 
       const bonks = data.bonks;
-      let lastBonkBlock;
+
       console.log("lastBonkBlock ", lastBonkBlock);
 
       if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
@@ -40,6 +43,7 @@ const bonkCron = new CronJob({
               : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
 
           _channel.send(msg);
+
           // }
         }
 

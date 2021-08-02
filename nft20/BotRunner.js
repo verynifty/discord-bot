@@ -2,9 +2,8 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 path = require("path");
-require("dotenv").config({
-  path: path.resolve(process.cwd(), "../.env"),
-});
+
+require("dotenv").config({ path: path.resolve(process.cwd(), "./.env") });
 
 const jobPrefifx = "BotRunner: ";
 const log = (msg) => {

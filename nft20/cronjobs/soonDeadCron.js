@@ -2,7 +2,7 @@ const axios = require("axios");
 const CronJob = require("cron").CronJob;
 const Discord = require("discord.js");
 
-const dayjs = require("dayJs");
+const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
 var utc = require("dayjs/plugin/utc");

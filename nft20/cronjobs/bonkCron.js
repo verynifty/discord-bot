@@ -15,7 +15,7 @@ let _channel = require("../BotRunner").getCudlChannel();
 
 // We will store only the pool's address
 let _pools = [];
-const cudlCron = new CronJob({
+const bonkCron = new CronJob({
   cronTime: "* * * * *",
   onTick: async function () {
     let start = new Date();
@@ -57,4 +57,4 @@ const cudlCron = new CronJob({
   runOnInit: true,
 });
 
-module.exports = cudlCron;
+module.exports = bonkCron;

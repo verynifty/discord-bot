@@ -2,6 +2,12 @@ const axios = require("axios");
 const CronJob = require("cron").CronJob;
 const Discord = require("discord.js");
 
+const dayjs = require("dayJs");
+const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
+var utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
+
 const jobPrefifx = "NewBonkEvent: ";
 const log = (msg) => {
   const now = new Date();
@@ -24,25 +30,19 @@ const soonDeadCron = new CronJob({
       // do logic to check and send
       const { data } = await axios.get("https://api.nft20.io/cudl/upcoming");
 
-      const upcoming = data;
+      const upcomingDead = data;
 
-      let lastBonkBlock = parseInt(bonks[0].blocknumber);
+      for (const dead of upcomingDead) {
+        const oneHour = 60 * 60 * 1000; /* ms */
+        const deadDate = new Date(dead.tod);
 
-      console.log("lastBonkBlock ", lastBonkBlock);
+        if (deadDate - new Date() <= oneHour) {
+          const msg = `Pet #${dead.pet_id} with score ${
+            dead.score
+          } is starving ${dayjs(deadDate).from(dayjs())} 💀`;
 
-      if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
-        for (const bonk of bonks) {
-          const oneMinute = 60 * 1000; /* ms */
-          const bonkDate = new Date(bonk.timestamp);
-
-          if (new Date() - bonkDate <= oneMinute) {
-            const msg =
-              bonk.attacker == bonk.winner
-                ? `#${bonk.attacker} just got BONKED by #${bonk.victim} for ${bonk.reward} $CUDL 🌟🔨`
-                : `#${bonk.attacker} tried to attack #${bonk.victim} but got BONKED for ${bonk.reward} $CUDL 🌟🔨`;
-
-            _channel.send(msg);
-          }
+          //   console.log(msg);
+          _channel.send(msg);
         }
 
         // console.log("bonk! ", bonk);

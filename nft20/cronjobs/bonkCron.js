@@ -16,7 +16,8 @@ let _channel = require("../BotRunner").getCudlChannel();
 // We will store only the pool's address
 let _pools = [];
 
-let lastBonkBlock = 0;
+let lastBonkBlock;
+let firstRun = true;
 
 const bonkCron = new CronJob({
   cronTime: "* * * * *",
@@ -28,6 +29,15 @@ const bonkCron = new CronJob({
       const { data } = await axios.get("https://api.nft20.io/cudl/bonks");
 
       const bonks = data.bonks;
+
+      if (lastBonkBlock == null) {
+        if (firstRun) {
+          log("First Run Bonk Bot. Initalizing data...");
+          firstRun = false;
+        }
+        log("Saved block or timestamp is null, resetting to newest event");
+        lastBonkBlock = bonks[0].blocknumber;
+      }
 
       console.log("lastBonkBlock ", lastBonkBlock);
 

@@ -26,8 +26,6 @@ const bonkCron = new CronJob({
 
       const bonks = data.bonks;
 
-      let lastBonkBlock = parseInt(bonks[0].blocknumber);
-
       console.log("lastBonkBlock ", lastBonkBlock);
 
       if (lastBonkBlock < parseInt(bonks[0].blocknumber)) {
@@ -44,6 +42,8 @@ const bonkCron = new CronJob({
           _channel.send(msg);
           // }
         }
+
+        let lastBonkBlock = parseInt(bonks[0].blocknumber);
 
         // console.log("bonk! ", bonk);
       }

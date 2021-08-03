@@ -210,7 +210,7 @@ client.on("ready", () => {
     // console.log();
 
     message.channel.send(
-      `To be cosidered a shipper you have to ship something until the countdown runs down everyday at midnight UTC.\nYou can ship code, a tweet, content, memes, writing, music. Anything that might get us one step closer to the moon.
+      `To get out of #EXILE you have to ship something productive for the community.\nYou can ship code, a tweet, content, memes, writing, music. Anything that might get us one step closer to the moon.
       `
     );
   });

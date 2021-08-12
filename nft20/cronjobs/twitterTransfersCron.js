@@ -48,7 +48,7 @@ const formatMsg = (transfer) => {
         desc += `${i+1}. ${nft_name[i]} (${ids[i]})\n`;
       }
     } else {
-      `${nft_name[i]} (${ids[i]})\n`;
+      desc = `${nft_name[0]} (${ids[0]})\n`;
     }
   }
   if (ids.length > 5) {

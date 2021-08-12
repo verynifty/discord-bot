@@ -84,7 +84,12 @@ const postTransfers = async (transfers) => {
         {status: formatMsg(transfers[i])}
       )
     } catch (err) {
-      log(err)
+      const error = err[0]
+      if (error && error.message) {
+        log(`Failed to post twitter status. Code [${error.code}], Message [${error.message}]`)
+      } else {
+        log(`Failed to post twitter status. Error [${err}]`)
+      }
     }
   }
 };

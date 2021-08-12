@@ -1,5 +1,5 @@
 // Run this file to start bot
-const Twitter = require('twitter');
+const Twitter = require("twitter");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 path = require("path");
@@ -22,7 +22,7 @@ const _twitterClient = new Twitter({
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
   access_token_secret: process.env.TWITTER_TOKEN_SECRET,
-})
+});
 
 let _channel;
 client.on("ready", () => {
@@ -47,7 +47,7 @@ module.exports = {
     return _channel;
   },
   getCudlChannel: () => {
-    const cudl_channel = client.channels.cache.get("802629514231545857");
+    const cudl_channel = client.channels.cache.get("875228020502310962");
     return cudl_channel;
   },
   getTwitterClient: () => {

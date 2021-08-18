@@ -48,7 +48,7 @@ const formatMsg = (transfer) => {
         desc += `${i+1}. ${nft_name[i]} (${ids[i]})\n`;
       }
     } else {
-      `${nft_name[i]} (${ids[i]})\n`;
+      desc = `${nft_name[0]} (${ids[0]})\n`;
     }
   }
   if (ids.length > 5) {
@@ -84,7 +84,12 @@ const postTransfers = async (transfers) => {
         {status: formatMsg(transfers[i])}
       )
     } catch (err) {
-      log(err)
+      const error = err[0]
+      if (error && error.message) {
+        log(`Failed to post twitter status. Code [${error.code}], Message [${error.message}]`)
+      } else {
+        log(`Failed to post twitter status. Error [${err}]`)
+      }
     }
   }
 };
